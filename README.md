@@ -1,4 +1,5 @@
-# OpenVPN Admin
+# OpenVPN Manager
+  fork from https://github.com/Chocobozzz/OpenVPN-Admin
 
 ## Summary
 Administrate its OpenVPN with a web interface (logs visualisations, users managing...) and a SQL database.
@@ -12,10 +13,9 @@ Administrate its OpenVPN with a web interface (logs visualisations, users managi
   * GNU/Linux with Bash and root access
   * Fresh install of OpenVPN
   * Web server (NGinx, Apache...)
-  * MySQL
+  * sqlite
   * PHP >= 5.5 with modules:
     * zip
-    * pdo_mysql
   * bower
   * unzip
   * wget
@@ -25,7 +25,7 @@ Administrate its OpenVPN with a web interface (logs visualisations, users managi
 ### Debian 8 Jessie
 
 ````
-# apt-get install openvpn apache2 php5-mysql mysql-server php5 nodejs unzip git wget sed npm curl
+# apt-get install openvpn apache2 php5 nodejs unzip git wget sed npm curl sqlite sqlite-devel
 # npm install -g bower
 # ln -s /usr/bin/nodejs /usr/bin/node
 ````
@@ -33,7 +33,7 @@ Administrate its OpenVPN with a web interface (logs visualisations, users managi
 ### Debian 9 Stretch
 
 ````
-# apt-get install openvpn apache2 php-mysql mysql-server php-zip php nodejs unzip git wget sed npm curl
+# apt-get install openvpn apache2 php-zip php nodejs unzip git wget sed npm curl sqlite sqlite-devel
 # npm install -g bower
 # ln -s /usr/bin/nodejs /usr/bin/node
 ````
@@ -42,12 +42,10 @@ Administrate its OpenVPN with a web interface (logs visualisations, users managi
 
 ````
 # yum install epel-release
-# yum install openvpn httpd  mariadb-server  nodejs unzip git wget sed npm
+# yum install openvpn httpd  sqlite sqlite-devel  nodejs unzip git wget sed npm
 # rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
-# yum isstall php56w php56w-mysql 
+# yum isstall php56w 
 # npm install -g bower
-# systemctl enable mariadb
-# systemctl start mariadb
 ````
 
 ### Other distribution... (PR welcome)
@@ -61,8 +59,8 @@ Only tested on Debian Jessie. Feel free to open issues.
   * Setup OpenVPN and the web application:
 
         $ cd ~/my_coding_workspace
-        $ git clone https://github.com/Chocobozzz/OpenVPN-Admin openvpn-admin
-        $ cd openvpn-admin
+        $ git clone https://github.com/hryGithub/openvpn-manager.git
+        $ cd openvpn-manager
         # ./install.sh /var/www www-data www-data
 
   * Setup the web server (Apache, NGinx...) to serve the web application.
