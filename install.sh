@@ -20,7 +20,7 @@ if [ "$#" -ne 3 ]; then
 fi
 
 # Ensure there are the prerequisites
-for i in openvpn php bower node unzip wget sed sqlite sqlite-devel; do
+for i in openvpn php bower node unzip wget sed sqlite3; do
   which $i > /dev/null
   if [ "$?" -ne 0 ]; then
     echo "Miss $i"
