@@ -1,10 +1,8 @@
 #!/bin/bash
 
 print_help () {
-  echo -e "./install.sh www_basedir user group"
-  echo -e "\tbase_dir: The place where the web application will be put in"
-  echo -e "\tuser:     User of the web application"
-  echo -e "\tgroup:    Group of the web application"
+  echo -e "./install.sh www_basedir"
+  echo -e "\tbase_dir: The place where the web application will be put in,it should be not exit"
 }
 
 # Ensure to be root
@@ -14,7 +12,7 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 # Ensure there are enought arguments
-if [ "$#" -ne 3 ]; then
+if [ "$#" -ne 1 ]; then
   print_help
   exit
 fi
@@ -29,13 +27,11 @@ for i in openvpn php bower node unzip wget sed sqlite3; do
 done
 
 www=$1
-user=$2
-group=$3
 
 openvpn_admin="$www/openvpn-admin"
 
 # Check the validity of the arguments
-if [ ! -d "$www" ] ||  ! grep -q "$user" "/etc/passwd" || ! grep -q "$group" "/etc/group" ; then
+if [ -d "$www" ] ; then
   print_help
   exit
 fi
@@ -245,7 +241,6 @@ done
 
 # Install third parties
 bower --allow-root install
-chown -R "$user:$group" "$openvpn_admin"
 
 printf "\033[1m\n#################################### Finish ####################################\n"
 
