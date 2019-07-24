@@ -28,8 +28,6 @@ done
 
 www=$1
 
-openvpn_admin="$www/openvpn-admin"
-
 # Check the validity of the arguments
 if [ -d "$www" ] ; then
   print_help
@@ -53,6 +51,17 @@ read -p "Port [443]: " server_port
 
 if [[ -z $server_port ]]; then
   server_port="443"
+fi
+
+printf "\n################## Setup database ##################\n"
+read -p "sqlite database dir[defalut $www/data]:" db_dir
+if [[ -z $db_dir ]]; then
+  db_dir=$www/data
+fi
+
+if [ -f $db_dir/openvpn-manager.db ];then
+	echo "The openvpn-manager database already exists."
+	exit
 fi
 
 printf "\n################## Certificates informations ##################\n"
@@ -198,29 +207,19 @@ printf "\n################## Setup web application ##################\n"
 cp -r "$base_path/installation/scripts" "/etc/openvpn/"
 chmod +x "/etc/openvpn/scripts/"*
 
-# Configure MySQL in openvpn scripts
-sed -i "s/DB=''/DB='$openvpn-admin/data/openvpn-admin.db'/" "/etc/openvpn/scripts/config.sh"
+# Configure database in openvpn scripts
+sed -i "s/DB=''/DB=$db_dir/openvpn-manager.db/" "/etc/openvpn/scripts/config.sh"
 
 # Create the directory of the web application
-mkdir "$openvpn_admin/data" -p
-cp -r "$base_path/"{index.php,sql,bower.json,.bowerrc,js,include,css,installation/client-conf} "$openvpn_admin"
+mkdir "$www/data" -p
+cp -r "$base_path/"{index.php,sql,bower.json,.bowerrc,js,include,css,installation/client-conf} "$www"
 
-
-# Setup Database
-
-if [ -f $openvpn-admin/data/openvpn-admin.db ];then
-	echo "The openvpn-admin database already exists."
-	exit
-fi
-printf "\n################## Setup Sqlite database ##################\n"
-touch $openvpn-admin/data/openvpn-admin.db
 
 # New workspace
-cd "$openvpn_admin"
-
+cd "$www"
 
 # Replace in the client configurations with the ip of the server and openvpn protocol
-for file in $(find -name client.ovpn); do
+for file in for file in "./client-conf/gnu-linux/client.conf" "./client-conf/osx-viscosity/client.conf" "./client-conf/windows/client.ovpn";do
   sed -i "s/remote xxx\.xxx\.xxx\.xxx 443/remote $ip_server $server_port/" $file
   echo "<ca>" >> $file
   cat "/etc/openvpn/ca.crt" >> $file
@@ -234,11 +233,6 @@ for file in $(find -name client.ovpn); do
   fi
 done
 
-# Copy ta.key inside the client-conf directory
-for directory in "./client-conf/gnu-linux/" "./client-conf/osx-viscosity/" "./client-conf/windows/"; do
-  cp "/etc/openvpn/"{ca.crt,ta.key} $directory
-done
-
 # Install third parties
 bower --allow-root install
 
@@ -248,5 +242,5 @@ echo -e "# Congratulations, you have successfully setup OpenVPN-Admin! #\r"
 echo -e "Please, finish the installation by configuring your web server (Apache, NGinx...)"
 echo -e "and install the web application by visiting http://your-installation/index.php?installation\r"
 echo -e "Then, you will be able to run OpenVPN with systemctl start openvpn@server\r"
-echo "Please, report any issues here https://github.com/Chocobozzz/OpenVPN-Admin"
+echo "Please, report any issues here https://github.com/hryGithub/openvpn-manager.git"
 printf "\n################################################################################ \033[0m\n"

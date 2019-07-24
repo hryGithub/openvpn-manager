@@ -1,3 +1,3 @@
 <?php	
-	$db   = 'openvpn-admin';
+	$db   = 'openvpn-manager';
 ?>

@@ -1,7 +1,7 @@
 <?php
 
   function getMigrationSchemas() {
-    return [ 0, 5 ];
+    return [ 0 ];
   }
 
   function updateSchema($bdd, $newKey) {
@@ -25,7 +25,7 @@
   }
 
   function isInstalled($bdd) {
-    $req = $bdd->prepare("SHOW TABLES LIKE 'admin'");
+    $req = $bdd->prepare("SELECT * FROM sqlite_master WHERE type='table' AND name='admin'");
     $req->execute();
 
     if(!$req->fetch())
