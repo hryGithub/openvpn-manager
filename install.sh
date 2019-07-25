@@ -3,6 +3,8 @@
 print_help () {
   echo -e "./install.sh www_basedir"
   echo -e "\tbase_dir: The place where the web application will be put in,it should be not exit"
+  echo -e "\tuser:     User of the web application"
+  echo -e "\tgroup:    Group of the web application"
 }
 
 # Ensure to be root
@@ -12,7 +14,7 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 # Ensure there are enought arguments
-if [ "$#" -ne 1 ]; then
+if [ "$#" -ne 3 ]; then
   print_help
   exit
 fi
@@ -27,6 +29,8 @@ for i in openvpn php bower node unzip wget sed sqlite3; do
 done
 
 www=$1
+user=$2
+group=$3
 
 # Check the validity of the arguments
 if [ -d "$www" ] ; then
@@ -208,18 +212,20 @@ cp -r "$base_path/installation/scripts" "/etc/openvpn/"
 chmod +x "/etc/openvpn/scripts/"*
 
 # Configure database in openvpn scripts
-sed -i "s/DB=''/DB=$db_dir/openvpn-manager.db/" "/etc/openvpn/scripts/config.sh"
+sed -i "s@DB=''@DB='$db_dir/openvpn-manager.db'@" "/etc/openvpn/scripts/config.sh"
 
 # Create the directory of the web application
 mkdir "$www/data" -p
 cp -r "$base_path/"{index.php,sql,bower.json,.bowerrc,js,include,css,installation/client-conf} "$www"
 
-
 # New workspace
 cd "$www"
 
+# Replace config.php variables
+sed -i "s@\$db = '';@\$$db = '$db_dir/openvpn-manager.db'@" "./include/config.php"
+
 # Replace in the client configurations with the ip of the server and openvpn protocol
-for file in for file in "./client-conf/gnu-linux/client.conf" "./client-conf/osx-viscosity/client.conf" "./client-conf/windows/client.ovpn";do
+for file in "./client-conf/gnu-linux/client.conf" "./client-conf/osx-viscosity/client.conf" "./client-conf/windows/client.ovpn";do
   sed -i "s/remote xxx\.xxx\.xxx\.xxx 443/remote $ip_server $server_port/" $file
   echo "<ca>" >> $file
   cat "/etc/openvpn/ca.crt" >> $file
@@ -235,7 +241,7 @@ done
 
 # Install third parties
 bower --allow-root install
-
+chown -R "$user:$group" "$www"
 printf "\033[1m\n#################################### Finish ####################################\n"
 
 echo -e "# Congratulations, you have successfully setup OpenVPN-Admin! #\r"
