@@ -222,7 +222,7 @@ cp -r "$base_path/"{index.php,sql,bower.json,.bowerrc,js,include,css,installatio
 cd "$www"
 
 # Replace config.php variables
-sed -i "s@\$db = '';@\$$db = '$db_dir/openvpn-manager.db'@" "./include/config.php"
+sed -i "s@\$db = '';@\$db = '$db_dir/openvpn-manager.db'@" "./include/config.php"
 
 # Replace in the client configurations with the ip of the server and openvpn protocol
 for file in "./client-conf/gnu-linux/client.conf" "./client-conf/osx-viscosity/client.conf" "./client-conf/windows/client.ovpn";do
@@ -241,7 +241,10 @@ done
 
 # Install third parties
 bower --allow-root install
+touch $db_dir/openvpn-manager.db
 chown -R "$user:$group" "$www"
+chmod 777 $db_dir/openvpn-manager.db
+
 printf "\033[1m\n#################################### Finish ####################################\n"
 
 echo -e "# Congratulations, you have successfully setup OpenVPN-Admin! #\r"

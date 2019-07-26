@@ -17,40 +17,19 @@ if [ "$#" -ne 1 ]; then
   exit
 fi
 
-www="$1/openvpn-admin"
+www=$1
 
 if [ ! -d "$www" ]; then
   print_help
   exit
 fi
 
-# Get root pass (to delete the database and the user)
-mysql_root_pass=""
-status_code=1
-
-while [ $status_code -ne 0 ]; do
-  read -p "MySQL root password: " -s mysql_root_pass; echo
-  echo "SHOW DATABASES" | mysql -u root --password="$mysql_root_pass" &> /dev/null
-  status_code=$?
-done
-
-mysql_user=$(sed -n "s/^.*user = '\(.*\)'.*$/\1/p" "$www/include/config.php")
-
-if [ "$mysql_user" = "" ]; then
-  echo "Can't find the MySQL user. Please ensure your include/config.php is well structured or report an issue"
-  exit
-fi
-
-echo -e "\033[1mAre you sure to completely delete OpenVPN configurations, the web application (with the MySQL user/database) and the iptables rules? (yes/*)\033[0m"
+echo -e "\033[1mAre you sure to completely delete OpenVPN configurations, the web application (with the sqlite database) ? (yes/*)\033[0m"
 read agree
 
 if [ "$agree" != "yes" ]; then
   exit
 fi
-
-# MySQL delete
-echo "DROP USER $mysql_user@localhost" | mysql -u root --password="$mysql_root_pass"
-echo "DROP DATABASE \`openvpn-admin\`" | mysql -u root --password="$mysql_root_pass"
 
 # Files delete (openvpn confs/keys + web application)
 rm -r /etc/openvpn/easy-rsa/
@@ -61,13 +40,5 @@ rm -r "$www"
 echo 0 > "/proc/sys/net/ipv4/ip_forward"
 sed -i '/net.ipv4.ip_forward = 1/d' '/etc/sysctl.conf'
 
-iptables -D FORWARD -i tun0 -j ACCEPT
-iptables -D FORWARD -o tun0 -j ACCEPT
-iptables -D OUTPUT -o tun0 -j ACCEPT
-
-iptables -D FORWARD -i tun0 -o eth0 -j ACCEPT
-iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE
-iptables -t nat -D POSTROUTING -s 10.8.0.0/24 -o eth0 -j MASQUERADE
-iptables -t nat -D POSTROUTING -s 10.8.0.2/24 -o eth0 -j MASQUERADE
-
 echo "The application has been completely removed!"
+echo "Please remove the openvpn firewall rules manually!"
