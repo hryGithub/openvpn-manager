@@ -243,7 +243,7 @@ done
 bower --allow-root install
 touch $db_dir/openvpn-manager.db
 chown -R "$user:$group" "$www"
-chmod 777 $db_dir/openvpn-manager.db
+chmod -R 777 $db_dir
 
 printf "\033[1m\n#################################### Finish ####################################\n"
 
