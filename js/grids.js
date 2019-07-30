@@ -207,7 +207,7 @@ $(function () {
          formatter : LEDIndicatorFormatter
       },
       {
-         title: "Enabled",
+         title: "可用",
          field: "user_enable",
          formatter : checkFormatter,
          events: {
