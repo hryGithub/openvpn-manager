@@ -44,7 +44,7 @@ Administrate its OpenVPN with a web interface (logs visualisations, users managi
 # yum install epel-release
 # yum install openvpn httpd  sqlite sqlite-devel  nodejs unzip git wget sed npm
 # rpm -Uvh https://mirror.webtatic.com/yum/el7/webtatic-release.rpm
-# yum isstall php56w 
+# yum install php56w php56w-pdo
 # npm install -g bower
 ````
 
