@@ -200,7 +200,6 @@ $(function () {
       { title: "用户名", field: "user_id", editable: userEditable },
       { title: "密码", field: "user_pass", editable: userEditable },
       { title: "邮箱", field: "user_mail", editable: userEditable },
-      { title: "手机", field: "user_phone", editable: userEditable },
       {
          title: "在线",
          field: "user_online",

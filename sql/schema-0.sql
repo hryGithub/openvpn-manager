@@ -25,7 +25,6 @@ CREATE TABLE IF NOT EXISTS "user" (
 "user_id"  TEXT(32) COLLATE NOCASE PRIMARY KEY,
 "user_pass"  TEXT(255) COLLATE NOCASE NOT NULL,
 "user_mail"  TEXT(64) COLLATE NOCASE DEFAULT NULL,
-"user_phone"  TEXT(16) COLLATE NOCASE DEFAULT NULL,
 "user_online"  INTEGER(1) NOT NULL DEFAULT 0,
 "user_enable"  INTEGER(1),
 "user_start_date"  TEXT,
