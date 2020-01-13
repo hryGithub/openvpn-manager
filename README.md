@@ -48,12 +48,6 @@ Administrate its OpenVPN with a web interface (logs visualisations, users managi
 # npm install -g bower
 ````
 
-### Other distribution... (PR welcome)
-
-## Tests
-
-Only tested on Debian Jessie. Feel free to open issues.
-
 ## Installation
 
   * Setup OpenVPN and the web application:
